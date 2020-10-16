@@ -1,12 +1,18 @@
 package com.seclab.nmaping;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
+import com.seclab.nmaping.base.BaseActivity;
+import com.seclab.nmaping.nmapinstall.NmapBinaryInstaller;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -16,14 +22,46 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-public class MainActivity extends AppCompatActivity {
+import java.io.File;
+
+public class MainActivity extends BaseActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
 
+
+
+    String DEBUG_TAG = "myTag";
+
+    String DEFAULT_SHARED_PREFERENCES = "mySharedPrefs";
+    String firstStartPref = "firstStart";
+
+    public static File appBinHome;
+    String NMAP_COMMAND = "./nmap ";
+
+    @SuppressLint("WrongConstant")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //初始化nmap
+        boolean firstInstall = true;
+        appBinHome = getDir("bin", Context.MODE_PRIVATE);
+
+        SharedPreferences mySharedPreferences = getSharedPreferences(DEFAULT_SHARED_PREFERENCES, MODE_PRIVATE);
+        firstInstall = mySharedPreferences.getBoolean(firstStartPref, true);
+        if(firstInstall) {
+            NmapBinaryInstaller installer = new NmapBinaryInstaller(getApplicationContext());
+            installer.installResources();
+            Log.d(DEBUG_TAG, "Installing binaries");
+
+
+            // TODO: Write some test code to see if the binaries are placed correctly and have the right permissions!
+            mySharedPreferences.edit().putBoolean(firstStartPref, false).apply();
+        }
+
+
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -39,12 +77,16 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
+                R.id.nav_home, R.id.nav_hostscan, R.id.nav_slideshow)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+
+
+
     }
 
     @Override

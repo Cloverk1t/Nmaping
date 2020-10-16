@@ -1,0 +1,117 @@
+package com.seclab.nmaping.ui.hostscan;
+
+import android.app.Activity;
+import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.seclab.nmaping.MainActivity;
+import com.seclab.nmaping.R;
+import com.seclab.nmaping.adapter.ScanResAdapter;
+import com.seclab.nmaping.bean.ScanBean;
+import com.seclab.nmaping.content.MyApplication;
+import com.seclab.nmaping.ui.slideshow.SlideshowViewModel;
+import com.seclab.nmaping.utils.CommandRunner;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class HostScanFragment extends Fragment {
+
+    private ScanResAdapter scanResAdapter = new ScanResAdapter(R.layout.scan_res_item);
+    private RecyclerView recyclerView;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private Activity mainActivity;
+    public static File appBinHome;
+    String NMAP_COMMAND = "./nmap ";
+
+
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+        View root = inflater.inflate(R.layout.fragment_hostscan, container, false);
+
+        mainActivity = getActivity();
+        assert mainActivity != null;
+        appBinHome = mainActivity.getDir("bin", Context.MODE_PRIVATE);
+
+        recyclerView = root.findViewById(R.id.rv_scan_res);
+        swipeRefreshLayout = root.findViewById(R.id.swiperefresh);
+
+        swipeRefreshLayout.setRefreshing(true);
+
+
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(MyApplication.getmContText()));
+        recyclerView.setAdapter(scanResAdapter);
+
+
+        scanResAdapter.addData(genData());
+
+        swipeRefreshLayout.setRefreshing(false);
+        new AsyncCommandExecutor().execute(NMAP_COMMAND + "-sn -T 5 192.168.137.0/24");
+
+        return root;
+    }
+
+    private List<ScanBean> genData() {
+
+
+        ArrayList<ScanBean> list = new ArrayList<>();
+        for (int i = 0; i <= 5; i++) {
+            list.add(new ScanBean("this is " + i, "mac addr test"));
+        }
+
+
+        return list;
+
+    }
+    public class AsyncCommandExecutor extends AsyncTask<String, Void, Void> {
+
+        public String returnOutput;
+//        private ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+//            this.progressDialog.setTitle("NMAP");
+//            this.progressDialog.setMessage("Scanning...");
+//            this.progressDialog.setCancelable(false);
+//            this.progressDialog.show();
+            return;
+        }
+        @Override
+        protected Void doInBackground(String... params) {
+            try {
+                this.returnOutput = CommandRunner.execCommand(params[0], HostScanFragment.appBinHome.getAbsoluteFile());
+            } catch (IOException e) {
+                this.returnOutput = "IOException while trying to scan!";
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                this.returnOutput = "Nmap Scan Interrupted!";
+            }
+
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void result) {
+            Log.d("DEBUG", returnOutput);
+            Toast.makeText(MyApplication.getmContText(), returnOutput, Toast.LENGTH_LONG).show();
+        }
+    }
+}

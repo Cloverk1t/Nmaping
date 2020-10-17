@@ -10,6 +10,9 @@ public class ScanBean {
         this.macAddr = macAddr;
     }
 
+    public ScanBean(Object o) {
+    }
+
     public String getIpName() {
         return ipName;
     }

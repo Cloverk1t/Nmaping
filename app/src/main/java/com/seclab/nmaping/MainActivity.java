@@ -13,6 +13,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.seclab.nmaping.base.BaseActivity;
 import com.seclab.nmaping.nmapinstall.NmapBinaryInstaller;
+import com.seclab.nmaping.utils.IpUtils;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -23,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import java.io.File;
+import java.net.SocketException;
 
 public class MainActivity extends BaseActivity {
 
@@ -68,8 +70,12 @@ public class MainActivity extends BaseActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                try {
+                    Snackbar.make(view, IpUtils.getLocalIPAddress(), Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                } catch (SocketException e) {
+                    e.printStackTrace();
+                }
             }
         });
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

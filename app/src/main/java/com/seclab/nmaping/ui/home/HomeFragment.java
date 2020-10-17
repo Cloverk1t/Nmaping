@@ -21,6 +21,10 @@ import com.seclab.nmaping.R;
 import com.seclab.nmaping.content.MyApplication;
 import com.seclab.nmaping.utils.IpUtils;
 
+import org.w3c.dom.Text;
+
+import java.net.SocketException;
+
 public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
@@ -41,12 +45,29 @@ public class HomeFragment extends Fragment {
         final TextView text_dns2 = root.findViewById(R.id.text_dns2);
         final Button button_scan = root.findViewById(R.id.btnScan);
         final Button button_settings = root.findViewById(R.id.btnSettings);
+        final View cardNetworkUnable = root.findViewById(R.id.card_network_unable);
+        final TextView tvNetworkError = root.findViewById(R.id.tv_network_error);
+
+        try {
+            if (!IpUtils.innerIP(IpUtils.getLocalIPAddress()) || IpUtils.getIpBinary(MyApplication.getmContText()) == 0){
+                cardNetworkUnable.setVisibility(View.VISIBLE);
+            }
+            if (IpUtils.isBigNet(IpUtils.getLocalIPAddress())){
+                cardNetworkUnable.setVisibility(View.VISIBLE);
+                tvNetworkError.setText("您正处于172网段,主机发现会非常耗时！");
+            }
+            //添加172网段提示
+
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+
         button_scan.setOnClickListener(v -> {
             try {
-                if (!IpUtils.innerIP(IpUtils.getLocalIPAddress())) {
+                if (!IpUtils.innerIP(IpUtils.getLocalIPAddress()) || IpUtils.getIpBinary(MyApplication.getmContText()) == 0) {
                     Snackbar.make(getActivity().findViewById(R.id.fab), "不支持的网络类型!", Snackbar.LENGTH_LONG)
-                            .setAction("OK", v1 -> {
-
+                            .setAction("打开wifi设置", v1 -> {
+                                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                             })
                             .show();
                     return;
@@ -59,17 +80,22 @@ public class HomeFragment extends Fragment {
         button_settings.setOnClickListener(v -> {
             startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
         });
-        @SuppressLint("WrongConstant") WifiManager mWifiManger = (WifiManager) MyApplication.getmContText().getSystemService("wifi");
-        DhcpInfo dhcpInfo = mWifiManger.getDhcpInfo();
-        text_network.setText(mWifiManger.getConnectionInfo().getSSID().toString());
-        text_security.setText("WPA2");
-        text_bssid.setText(mWifiManger.getConnectionInfo().getBSSID().toString());
-        text_dhcp.setText(intToIp(dhcpInfo.serverAddress));
-        text_ipAddress.setText(intToIp(dhcpInfo.ipAddress));
-        text_netmask.setText(intToIp(dhcpInfo.netmask));
-        text_gateway.setText(intToIp(dhcpInfo.gateway));
-        text_dns1.setText(intToIp(dhcpInfo.dns1));
-        text_dns2.setText(intToIp(dhcpInfo.dns2));
+        try {
+            @SuppressLint("WrongConstant") WifiManager mWifiManger = (WifiManager) MyApplication.getmContText().getSystemService("wifi");
+            DhcpInfo dhcpInfo = mWifiManger.getDhcpInfo();
+            text_network.setText(mWifiManger.getConnectionInfo().getSSID().toString());
+            text_security.setText("WPA2");
+            text_bssid.setText(mWifiManger.getConnectionInfo().getBSSID().toString());
+            text_dhcp.setText(intToIp(dhcpInfo.serverAddress));
+            text_ipAddress.setText(intToIp(dhcpInfo.ipAddress));
+            text_netmask.setText(intToIp(dhcpInfo.netmask));
+            text_gateway.setText(intToIp(dhcpInfo.gateway));
+            text_dns1.setText(intToIp(dhcpInfo.dns1));
+            text_dns2.setText(intToIp(dhcpInfo.dns2));
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
         return root;
     }
 

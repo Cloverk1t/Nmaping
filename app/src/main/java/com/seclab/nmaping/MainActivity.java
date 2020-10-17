@@ -33,6 +33,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.net.SocketException;
 import java.util.ArrayList;
 
@@ -81,12 +82,8 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
 
-                try {
-                    Snackbar.make(view, IpUtils.getInnerIPSet(MyApplication.getmContText()), Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                } catch (SocketException e) {
-                    e.printStackTrace();
-                }
+                Snackbar.make(view, IpUtils.getIpBinary(MyApplication.getmContText()) == 0 ? "true" :  "false", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
 
             }
         });
@@ -127,6 +124,7 @@ public class MainActivity extends BaseActivity {
 
         return true;
     }
+
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);

@@ -69,7 +69,7 @@ public class HostScanFragment extends Fragment {
             @Override
             public void onItemChildClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
                 TextView textView = (TextView) adapter.getViewByPosition(position,R.id.tv_scanTitle);
-                Toast.makeText(MyApplication.getmContText(), textView.getText(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MyApplication.getmContText(), textView.getText(), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MyApplication.getmContText(),ScanResActivity.class);
                 intent.putExtra("IP",textView.getText());
                 startActivity(intent);
@@ -83,7 +83,9 @@ public class HostScanFragment extends Fragment {
             @Override
             public void onRefresh() {
                 try {
-                    if (!IpUtils.innerIP(IpUtils.getLocalIPAddress())){
+                    if (!IpUtils.innerIP(IpUtils.getLocalIPAddress()) || IpUtils.getIpBinary(MyApplication.getmContText()) == 0){
+                        swipeRefreshLayout.setRefreshing(false);
+                        Snackbar.make(getActivity().findViewById(R.id.fab), "您所在的网络暂时不支持哦!", Snackbar.LENGTH_LONG).show();
                         return;
                     }
                 } catch (SocketException e) {
@@ -102,12 +104,12 @@ public class HostScanFragment extends Fragment {
 
 
         try {
-            if (IpUtils.innerIP(IpUtils.getLocalIPAddress())){
+            if (IpUtils.innerIP(IpUtils.getLocalIPAddress()) && IpUtils.getIpBinary(MyApplication.getmContText()) != 0){
                 Snackbar.make(getActivity().findViewById(R.id.fab), "正在进行主机发现,请等待...", Snackbar.LENGTH_LONG).show();
                 initData();
             } else {
                 //在这里显示公网ip的逻辑
-                Snackbar.make(getActivity().findViewById(R.id.fab), IpUtils.getLocalIPAddress() + " is private ip", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(getActivity().findViewById(R.id.fab), "您所在的网络暂时不支持哦!", Snackbar.LENGTH_LONG).show();
             }
 
         } catch (SocketException e) {

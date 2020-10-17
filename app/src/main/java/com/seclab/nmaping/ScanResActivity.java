@@ -76,7 +76,7 @@ public class ScanResActivity extends BaseActivity {
 
         Intent intent = getIntent();
 
-        tvSingleHostRes.setText(intent.getStringExtra("IP"));
+//        tvSingleHostRes.setText(intent.getStringExtra("IP"));
 
 
 

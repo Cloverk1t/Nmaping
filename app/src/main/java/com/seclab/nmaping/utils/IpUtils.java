@@ -28,6 +28,14 @@ public class IpUtils {
         }
         return "null";
     }
+
+    public static boolean isBigNet(String ip){
+        Pattern reg = Pattern.compile("^(172\\.((1[6-9])|(2\\d)|(3[01]))\\.\\d{1,3}\\.\\d{1,3})$");
+        Matcher match = reg.matcher(ip);
+
+        return match.find();
+    }
+
     public static boolean innerIP(String ip) {
 
         Pattern reg = Pattern.compile("^(172\\.((1[6-9])|(2\\d)|(3[01]))\\.\\d{1,3}\\.\\d{1,3})|(192\\.168\\.\\d{1,3}\\.\\d{1,3})$");

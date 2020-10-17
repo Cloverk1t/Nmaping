@@ -1,6 +1,7 @@
 package com.seclab.nmaping.adapter;
 
 
+import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.seclab.nmaping.R;
@@ -21,9 +22,7 @@ public class ScanResAdapter extends BaseQuickAdapter<ScanBean, BaseViewHolder> {
     @Override
     protected void convert(@NotNull BaseViewHolder baseViewHolder, ScanBean scanBean) {
 
-        baseViewHolder.setText(R.id.tv_scanTitle,scanBean.getIpName())
-                .setText(R.id.tv_scanSecondaryText,scanBean.getMacAddr());
-
+        baseViewHolder.setText(R.id.tv_scanTitle,scanBean.getIpName());
 
     }
 }

@@ -3,6 +3,7 @@
     package="com.seclab.nmaping">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 
     <application
         android:name=".content.MyApplication"
@@ -22,6 +23,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".ScanResActivity"
+            android:parentActivityName=".MainActivity"
+            >
+
+        </activity>
+
+
     </application>
 
 </manifest>

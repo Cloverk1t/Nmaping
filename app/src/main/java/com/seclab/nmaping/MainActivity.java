@@ -2,19 +2,27 @@ package com.seclab.nmaping;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.net.DhcpInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.Toast;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.seclab.nmaping.base.BaseActivity;
+import com.seclab.nmaping.content.MyApplication;
 import com.seclab.nmaping.nmapinstall.NmapBinaryInstaller;
 import com.seclab.nmaping.utils.IpUtils;
 
+import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -25,6 +33,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import java.io.File;
 import java.net.SocketException;
+import java.util.ArrayList;
 
 public class MainActivity extends BaseActivity {
 
@@ -70,12 +79,14 @@ public class MainActivity extends BaseActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 try {
-                    Snackbar.make(view, IpUtils.getLocalIPAddress(), Snackbar.LENGTH_LONG)
+                    Snackbar.make(view, IpUtils.getInnerIPSet(MyApplication.getmContText()), Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 } catch (SocketException e) {
                     e.printStackTrace();
                 }
+
             }
         });
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -93,6 +104,32 @@ public class MainActivity extends BaseActivity {
 
 
 
+
+
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.action_settings_level:
+
+//        .setPositiveButton(resources.getString(R.string.ok)) { dialog, which ->
+//                // Respond to positive button press
+//            }
+//            // Single-choice items (initialized with checked item)
+//        .setSingleChoiceItems(singleItems, checkedItem) { dialog, which ->
+//                // Respond to item chosen
+//            }
+//        .show()
+
+
+
+                break;
+
+        }
+        return true;
     }
 
     @Override

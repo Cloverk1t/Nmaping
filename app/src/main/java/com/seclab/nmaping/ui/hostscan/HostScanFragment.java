@@ -2,6 +2,7 @@ package com.seclab.nmaping.ui.hostscan;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,9 +21,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.seclab.nmaping.MainActivity;
 import com.seclab.nmaping.R;
+import com.seclab.nmaping.ScanResActivity;
 import com.seclab.nmaping.adapter.ScanResAdapter;
 import com.seclab.nmaping.bean.ScanBean;
 import com.seclab.nmaping.content.MyApplication;
@@ -64,10 +68,17 @@ public class HostScanFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(MyApplication.getmContText()));
         recyclerView.setAdapter(scanResAdapter);
 
+        scanResAdapter.addChildClickViewIds(R.id.bt_lookup);
+        scanResAdapter.setOnItemChildClickListener(new OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
+                startActivity(new Intent(MyApplication.getmContText(), ScanResActivity.class));
+            }
+        });
 
         try {
             if (IpUtils.innerIP(IpUtils.getLocalIPAddress())){
-                new AsyncCommandExecutor().execute(NMAP_COMMAND + "-T 5 -sP -oG - 192.168.137.0/24");
+                new AsyncCommandExecutor().execute(NMAP_COMMAND + "-T 5 -sP -oG - "+ IpUtils.getInnerIPSet(MyApplication.getmContText()));
             } else {
                 //在这里显示公网ip的逻辑
                 Toast.makeText(MyApplication.getmContText(), IpUtils.getLocalIPAddress()+ " is not private ip", Toast.LENGTH_LONG).show();
@@ -116,7 +127,7 @@ public class HostScanFragment extends Fragment {
             List temp = NmapFormat.NmapResFormat(returnOutput);
             ArrayList<ScanBean> list = new ArrayList<>();
             for (int i = 1; i < NmapFormat.NmapResFormat(returnOutput).size(); i++){
-                list.add(new ScanBean(temp.get(i).toString(),"test"));
+                list.add(new ScanBean(temp.get(i).toString()));
             }
             scanResAdapter.addData(list);
             swipeRefreshLayout.setRefreshing(false);

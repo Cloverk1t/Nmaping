@@ -16,8 +16,10 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.seclab.nmaping.R;
 import com.seclab.nmaping.content.MyApplication;
+import com.seclab.nmaping.utils.IpUtils;
 
 public class HomeFragment extends Fragment {
 
@@ -40,6 +42,18 @@ public class HomeFragment extends Fragment {
         final Button button_scan = root.findViewById(R.id.btnScan);
         final Button button_settings = root.findViewById(R.id.btnSettings);
         button_scan.setOnClickListener(v -> {
+            try {
+                if (!IpUtils.innerIP(IpUtils.getLocalIPAddress())) {
+                    Snackbar.make(getActivity().findViewById(R.id.fab), "不支持的网络类型!", Snackbar.LENGTH_LONG)
+                            .setAction("OK", v1 -> {
+
+                            })
+                            .show();
+                    return;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             Navigation.findNavController(getView()).navigate(R.id.action_nav_home_to_nav_hostscan3);
         });
         button_settings.setOnClickListener(v -> {

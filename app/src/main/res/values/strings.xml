@@ -9,6 +9,6 @@
 
     <string name="menu_home">主页</string>
     <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_slideshow">关于</string>
     <string name="menu_hostscan">主机发现</string>
 </resources>

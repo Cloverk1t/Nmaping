@@ -3,6 +3,7 @@ package com.seclab.nmaping.ui.hostscan;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,6 +37,8 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class HostScanFragment extends Fragment {
 
     private ScanResAdapter scanResAdapter = new ScanResAdapter(R.layout.scan_res_item);
@@ -44,21 +47,38 @@ public class HostScanFragment extends Fragment {
     private Activity mainActivity;
     public static File appBinHome;
     String NMAP_COMMAND = "./nmap ";
+    String DEFAULT_SHARED_PREFERENCES = "mySharedPrefs";
     private ArrayList<ScanBean> scaResList = new ArrayList<>();
+
+    private int scanLevel = 4 + 1;
+    private int scanNum = 0;
+    private String[] scanNumList = new String[]{
+            "20",
+            "30",
+            "50",
+            "80",
+            "100"
+    };
+    private SharedPreferences mySharedPreferences;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_hostscan, container, false);
 
+
+
+
         mainActivity = getActivity();
         assert mainActivity != null;
-        appBinHome = mainActivity.getDir("bin", Context.MODE_PRIVATE);
+        appBinHome = mainActivity.getDir("bin", MODE_PRIVATE);
 
         recyclerView = root.findViewById(R.id.rv_scan_res);
         swipeRefreshLayout = root.findViewById(R.id.swiperefresh);
 
+        mySharedPreferences = mainActivity.getSharedPreferences(DEFAULT_SHARED_PREFERENCES, MODE_PRIVATE);
 
+        scanNum = mySharedPreferences.getInt("scanNum",0);
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(MyApplication.getmContText()));
@@ -123,9 +143,10 @@ public class HostScanFragment extends Fragment {
     }
 
     public void initData(){
-
+        scanLevel = mySharedPreferences.getInt("scanLevel",4) + 1;
         try {
-            new AsyncCommandExecutor().execute(NMAP_COMMAND + "-T 5 -sP -oG - "+ IpUtils.getInnerIPSet(MyApplication.getmContText()));
+
+            new AsyncCommandExecutor().execute(NMAP_COMMAND + "-T "+ scanLevel +" -sP -oG - "+ IpUtils.getInnerIPSet(MyApplication.getmContText()));
         } catch (SocketException e) {
             e.printStackTrace();
         }

@@ -15,7 +15,11 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="Theme.Nmaping.NoActionBar">
+    <style name="myDialog" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.Nmaping.NoActionBar" >
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>

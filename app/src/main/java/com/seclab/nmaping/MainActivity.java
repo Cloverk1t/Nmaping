@@ -24,6 +24,7 @@ import com.seclab.nmaping.nmapinstall.NmapBinaryInstaller;
 import com.seclab.nmaping.utils.IpUtils;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -50,6 +51,7 @@ public class MainActivity extends BaseActivity {
 
     public static File appBinHome;
     String NMAP_COMMAND = "./nmap ";
+    private SharedPreferences mySharedPreferences;
 
     @SuppressLint("WrongConstant")
     @Override
@@ -61,7 +63,7 @@ public class MainActivity extends BaseActivity {
         boolean firstInstall = true;
         appBinHome = getDir("bin", Context.MODE_PRIVATE);
 
-        SharedPreferences mySharedPreferences = getSharedPreferences(DEFAULT_SHARED_PREFERENCES, MODE_PRIVATE);
+        mySharedPreferences = getSharedPreferences(DEFAULT_SHARED_PREFERENCES, MODE_PRIVATE);
         firstInstall = mySharedPreferences.getBoolean(firstStartPref, true);
         if(firstInstall) {
             NmapBinaryInstaller installer = new NmapBinaryInstaller(getApplicationContext());
@@ -121,6 +123,47 @@ public class MainActivity extends BaseActivity {
         if(item.getItemId()==android.R.id.home){
             drawer.openDrawer(Gravity.LEFT);
         }
+
+        switch (item.getItemId()){
+            case R.id.action_settings_level:
+                new MaterialAlertDialogBuilder(MainActivity.this,R.style.myDialog)
+                        .setTitle("设置扫描等级")
+                        .setPositiveButton("Ok",null)
+                        .setSingleChoiceItems(new String[]{
+                                "1(最慢,使用前要想好)",
+                                "2",
+                                "3(Nmap默认,均衡选项)",
+                                "4",
+                                "5(最快,程序默认,精度低)"
+                        }, mySharedPreferences.getInt("scanLevel", 4), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mySharedPreferences.edit().putInt("scanLevel",which).apply();
+
+                            }
+                        })
+                        .show();
+                break;
+            case R.id.action_settings_number:
+                new MaterialAlertDialogBuilder(MainActivity.this,R.style.myDialog)
+                        .setTitle("设置扫描端口数量")
+                        .setPositiveButton("Ok",null)
+                        .setSingleChoiceItems(new String[]{
+                                "20",
+                                "30",
+                                "50",
+                                "80",
+                                "100"
+                        }, mySharedPreferences.getInt("scanNum", 0), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mySharedPreferences.edit().putInt("scanNum",which).apply();
+                            }
+                        })
+                        .show();
+                break;
+        }
+
 
         return true;
     }

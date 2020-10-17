@@ -2,6 +2,7 @@ package com.seclab.nmaping;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,20 +40,30 @@ public class ScanResActivity extends BaseActivity {
     String NMAP_COMMAND = "./nmap ";
     private View scanResProgress;
     private View scanResView;
-
-
+    String DEFAULT_SHARED_PREFERENCES = "mySharedPrefs";
+    private int scanNum = 0;
+    private String[] scanNumList = new String[]{
+            "20",
+            "30",
+            "50",
+            "80",
+            "100"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scanres);
 
+
+
         tvSingleHostRes = findViewById(R.id.single_host_res);
         appBinHome = getDir("bin", Context.MODE_PRIVATE);
         scanResProgress = findViewById(R.id.scan_res_progress);
         scanResView = findViewById(R.id.scan_res_view);
 
-
+        SharedPreferences mySharedPreferences = getSharedPreferences(DEFAULT_SHARED_PREFERENCES, MODE_PRIVATE);
+        scanNum = mySharedPreferences.getInt("scanNum",0);
 
 
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -88,7 +99,7 @@ public class ScanResActivity extends BaseActivity {
     }
     public void initData(String ip){
 
-        new AsyncCommandExecutor().execute(NMAP_COMMAND + "-sT -n --top-ports 20 "+ ip);
+        new AsyncCommandExecutor().execute(NMAP_COMMAND + "-sT -n --top-ports " + scanNumList[scanNum] +" "+ ip);
 
     }
 

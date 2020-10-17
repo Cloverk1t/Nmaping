@@ -81,7 +81,7 @@ public class HostScanFragment extends Fragment {
                 new AsyncCommandExecutor().execute(NMAP_COMMAND + "-T 5 -sP -oG - "+ IpUtils.getInnerIPSet(MyApplication.getmContText()));
             } else {
                 //在这里显示公网ip的逻辑
-                Toast.makeText(MyApplication.getmContText(), IpUtils.getLocalIPAddress()+ " is not private ip", Toast.LENGTH_LONG).show();
+                Snackbar.make(getActivity().findViewById(R.id.nav_hostscan), IpUtils.getLocalIPAddress() + " is private ip", Snackbar.LENGTH_LONG).show();
             }
 
         } catch (SocketException e) {

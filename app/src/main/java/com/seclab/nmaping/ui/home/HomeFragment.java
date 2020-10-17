@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.seclab.nmaping.R;
 import com.seclab.nmaping.content.MyApplication;
@@ -39,7 +40,7 @@ public class HomeFragment extends Fragment {
         final Button button_scan = root.findViewById(R.id.btnScan);
         final Button button_settings = root.findViewById(R.id.btnSettings);
         button_scan.setOnClickListener(v -> {
-            startActivity(new Intent(getActivity(), HomeFragment.class));
+            Navigation.findNavController(getView()).navigate(R.id.action_nav_home_to_nav_hostscan3);
         });
         button_settings.setOnClickListener(v -> {
             startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
@@ -47,6 +48,7 @@ public class HomeFragment extends Fragment {
         @SuppressLint("WrongConstant") WifiManager mWifiManger = (WifiManager) MyApplication.getmContText().getSystemService("wifi");
         DhcpInfo dhcpInfo = mWifiManger.getDhcpInfo();
         text_network.setText(mWifiManger.getConnectionInfo().getSSID().toString());
+        text_security.setText("WPA2");
         text_bssid.setText(mWifiManger.getConnectionInfo().getBSSID().toString());
         text_dhcp.setText(intToIp(dhcpInfo.serverAddress));
         text_ipAddress.setText(intToIp(dhcpInfo.ipAddress));

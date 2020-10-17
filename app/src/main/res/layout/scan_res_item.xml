@@ -77,7 +77,7 @@
                     android:text="@string/scan_action_1"
                     android:textAllCaps="false"
                     style="?attr/borderlessButtonStyle"
-                    android:layout_marginRight="8dp" />
+                     />
 
 
             </LinearLayout>

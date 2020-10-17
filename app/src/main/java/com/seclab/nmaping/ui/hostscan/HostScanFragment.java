@@ -87,6 +87,13 @@ public class HostScanFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                try {
+                    if (!IpUtils.innerIP(IpUtils.getLocalIPAddress())){
+                        return;
+                    }
+                } catch (SocketException e) {
+                    e.printStackTrace();
+                }
                 Snackbar.make(getActivity().findViewById(R.id.fab), "正在进行主机发现,请等待...", Snackbar.LENGTH_LONG).show();
                 for (int i = 0; i < scaResList.size(); i++){
                     scanResAdapter.remove(scaResList.get(i));

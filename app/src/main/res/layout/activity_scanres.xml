@@ -8,7 +8,31 @@
     tools:context=".ScanResActivity">
 
 
+    <LinearLayout
+        android:id="@+id/scan_res_progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="正在深度扫描主机中..."
+            />
 
-    <include layout="@layout/content_scrolling" />
+        <ProgressBar
+            android:layout_width="198dp"
+            android:layout_height="48dp"
+            />
+
+    </LinearLayout>
+
+
+
+    <include
+        android:id="@+id/scan_res_view"
+        layout="@layout/content_scrolling"
+        android:visibility="gone"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

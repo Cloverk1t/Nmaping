@@ -25,6 +25,7 @@
         </activity>
 
         <activity android:name=".ScanResActivity"
+            android:label="主机详情"
             android:parentActivityName=".MainActivity"
             >
 

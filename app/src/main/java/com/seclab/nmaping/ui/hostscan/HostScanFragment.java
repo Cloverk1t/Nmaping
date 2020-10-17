@@ -49,6 +49,7 @@ public class HostScanFragment extends Fragment {
     private Activity mainActivity;
     public static File appBinHome;
     String NMAP_COMMAND = "./nmap ";
+    private ArrayList<ScanBean> scaResList = new ArrayList<>();
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -72,16 +73,39 @@ public class HostScanFragment extends Fragment {
         scanResAdapter.setOnItemChildClickListener(new OnItemChildClickListener() {
             @Override
             public void onItemChildClick(@NonNull BaseQuickAdapter adapter, @NonNull View view, int position) {
-                startActivity(new Intent(MyApplication.getmContText(), ScanResActivity.class));
+                TextView textView = (TextView) adapter.getViewByPosition(position,R.id.tv_scanTitle);
+                Toast.makeText(MyApplication.getmContText(), textView.getText(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MyApplication.getmContText(),ScanResActivity.class);
+                intent.putExtra("IP",textView.getText());
+                startActivity(intent);
+//                startActivity(new Intent(MyApplication.getmContText(), ScanResActivity.class));
             }
         });
 
+
+        //处理下拉刷新事件
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Snackbar.make(getActivity().findViewById(R.id.fab), "正在进行主机发现,请等待...", Snackbar.LENGTH_LONG).show();
+                for (int i = 0; i < scaResList.size(); i++){
+                    scanResAdapter.remove(scaResList.get(i));
+                }
+                recyclerView.refreshDrawableState();
+                scaResList.clear();
+                initData();
+            }
+        });
+
+
+
         try {
             if (IpUtils.innerIP(IpUtils.getLocalIPAddress())){
-                new AsyncCommandExecutor().execute(NMAP_COMMAND + "-T 5 -sP -oG - "+ IpUtils.getInnerIPSet(MyApplication.getmContText()));
+                Snackbar.make(getActivity().findViewById(R.id.fab), "正在进行主机发现,请等待...", Snackbar.LENGTH_LONG).show();
+                initData();
             } else {
                 //在这里显示公网ip的逻辑
-                Snackbar.make(getActivity().findViewById(R.id.nav_hostscan), IpUtils.getLocalIPAddress() + " is private ip", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(getActivity().findViewById(R.id.fab), IpUtils.getLocalIPAddress() + " is private ip", Snackbar.LENGTH_LONG).show();
             }
 
         } catch (SocketException e) {
@@ -94,6 +118,19 @@ public class HostScanFragment extends Fragment {
         return root;
     }
 
+    public void initData(){
+
+        try {
+            new AsyncCommandExecutor().execute(NMAP_COMMAND + "-T 5 -sP -oG - "+ IpUtils.getInnerIPSet(MyApplication.getmContText()));
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
+
     public class AsyncCommandExecutor extends AsyncTask<String, Void, Void> {
 
         public String returnOutput;
@@ -102,6 +139,11 @@ public class HostScanFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             swipeRefreshLayout.setRefreshing(true);
+
+            scaResList.clear();
+            recyclerView.refreshDrawableState();
+
+//            scanResAdapter.addData(scaResList);
 //            this.progressDialog.setTitle("NMAP");
 //            this.progressDialog.setMessage("Scanning...");
 //            this.progressDialog.setCancelable(false);
@@ -125,13 +167,13 @@ public class HostScanFragment extends Fragment {
         protected void onPostExecute(Void result) {
             Log.d("DEBUG", returnOutput);
             List temp = NmapFormat.NmapResFormat(returnOutput);
-            ArrayList<ScanBean> list = new ArrayList<>();
+
             for (int i = 1; i < NmapFormat.NmapResFormat(returnOutput).size(); i++){
-                list.add(new ScanBean(temp.get(i).toString()));
+                scaResList.add(new ScanBean(temp.get(i).toString()));
             }
-            scanResAdapter.addData(list);
+            scanResAdapter.addData(scaResList);
             swipeRefreshLayout.setRefreshing(false);
-            Toast.makeText(MyApplication.getmContText(), NmapFormat.NmapResFormat(returnOutput).toString(), Toast.LENGTH_LONG).show();
+//            Toast.makeText(MyApplication.getmContText(), NmapFormat.NmapResFormat(returnOutput).toString(), Toast.LENGTH_LONG).show();
         }
     }
 }

@@ -8,6 +8,7 @@ import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
@@ -38,7 +39,7 @@ import java.util.ArrayList;
 public class MainActivity extends BaseActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
-
+    private DrawerLayout drawer;
 
 
     String DEBUG_TAG = "myTag";
@@ -89,7 +90,7 @@ public class MainActivity extends BaseActivity {
 
             }
         });
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -109,28 +110,7 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        switch (item.getItemId()){
-            case R.id.action_settings_level:
-
-//        .setPositiveButton(resources.getString(R.string.ok)) { dialog, which ->
-//                // Respond to positive button press
-//            }
-//            // Single-choice items (initialized with checked item)
-//        .setSingleChoiceItems(singleItems, checkedItem) { dialog, which ->
-//                // Respond to item chosen
-//            }
-//        .show()
-
-
-
-                break;
-
-        }
-        return true;
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -138,7 +118,15 @@ public class MainActivity extends BaseActivity {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
+        if(item.getItemId()==android.R.id.home){
+            drawer.openDrawer(Gravity.LEFT);
+        }
+
+        return true;
+    }
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);

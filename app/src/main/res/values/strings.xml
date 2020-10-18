@@ -2,7 +2,7 @@
     <string name="app_name">Nmaping</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Nmping</string>
+    <string name="nav_header_title">Nmaping</string>
     <string name="nav_header_subtitle">A simple Network Ping Tools</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">设置</string>
@@ -14,7 +14,7 @@
     <string name="scan_action_1">查看</string>
     <string name="menu_advanced">高级</string>
     <string name="scan">执行</string>
-    <string name="enter_your_flags_here">input like -sT -n -O ip</string>
+    <string name="enter_your_flags_here">Input Like -sT -n -O ip</string>
 
 
 </resources>

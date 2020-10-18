@@ -22,6 +22,12 @@
         tools:layout="@layout/fragment_hostscan" />
 
     <fragment
+        android:id="@+id/nav_advanced"
+        android:name="com.seclab.nmaping.ui.advanced.AdvancedFragment"
+        android:label="@string/menu_advanced"
+        tools:layout="@layout/fragment_advanced" />
+
+    <fragment
         android:id="@+id/nav_slideshow"
         android:name="com.seclab.nmaping.ui.slideshow.SlideshowFragment"
         android:label="@string/menu_slideshow"
